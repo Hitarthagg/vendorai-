@@ -30,7 +30,7 @@ Prototype sign-in and demo account; purchase details; supplier editing; comparis
 ## Original prototype integrations
 
 - Sign-in is a local prototype, not real authentication. Only the displayed user name/email is saved in localStorage; purchase data is kept in memory.
-- Supplier offers use the original static demo catalogue. Set `DATA_SOURCE.liveUrl` in `src/App.jsx` to your backend endpoint to connect supplier data. The expected JSON contract is documented immediately above that setting.
+- The React prototype continues to use its original static demo catalogue. The Round 1 API is a separate backend with its own validated offer contract; use a frontend adapter before connecting it to `DATA_SOURCE.liveUrl`.
 - The original AI helper calls `window.claude.use("sample")`, which is unavailable in a standard Vite app. Manual entry and the worked example remain usable. Replace `askJson` with a call to your backend to add AI extraction; keep provider API keys on the backend.
 - Original placeholder supplier links, illustrative evidence labels and sample currency conversion rates are preserved.
 
@@ -40,3 +40,12 @@ Prototype sign-in and demo account; purchase details; supplier editing; comparis
 npm run build
 npm run preview
 ```
+
+## Backend API
+
+The independent Round 1 Express/TypeScript backend is in [`backend/`](./backend/README.md).
+It provides TinyFish supplier research, provenance-aware SQLite persistence,
+deterministic evaluation and counterfactual scenarios, and evidence-grounded
+negotiation drafts. Its setup, environment variables, routes, and tests are
+documented in the backend README. The frontend remains in this repository's
+existing root-level Vite/React app.
