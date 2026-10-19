@@ -566,6 +566,26 @@ fieldset.field legend { padding: 0 0 8px; }
   margin: 8px 0;
 }
 
+.offer-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin: 8px 0 14px;
+}
+
+.offer-facts > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.offer-facts small {
+  color: var(--muted);
+  font-size: 10px;
+}
+
 .quote-form {
   width: 100%;
   border-top: 1px solid var(--line);

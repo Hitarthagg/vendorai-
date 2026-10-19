@@ -57,6 +57,33 @@ describe("HTTP API", () => {
     expect((await saved.json()).offers).toHaveLength(3);
   });
 
+  it("evaluates an existing research brief without saving duplicate offers", async () => {
+    await start();
+    const researchResponse = await fetch(`${baseUrl}/api/research`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ brief, fixtureOnly: true }),
+    });
+    const research = await researchResponse.json();
+    const response = await fetch(`${baseUrl}/api/evaluate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        briefId: research.briefId,
+        brief: research.brief,
+        offers: research.offers,
+      }),
+    });
+    expect(response.status).toBe(200);
+    const evaluation = await response.json();
+    expect(evaluation.briefId).toBe(research.briefId);
+    expect(
+      evaluation.ranked.length + evaluation.partial.length + evaluation.excluded.length,
+    ).toBe(3);
+    const saved = await fetch(`${baseUrl}/api/briefs/${research.briefId}`);
+    expect((await saved.json()).offers).toHaveLength(3);
+  });
+
   it("validates malformed bodies and rejects unsupported research categories", async () => {
     await start();
     const malformed = await fetch(`${baseUrl}/api/research`, {

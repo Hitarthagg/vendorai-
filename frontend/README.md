@@ -1,49 +1,33 @@
-# VendorMind — React + CSS
+# VendorMind frontend
 
-Converted from the supplied single HTML file into a Vite React project using JavaScript and JSX. No TypeScript or Tailwind is needed.
+The Vite/React UI connects to the Express backend for supplier research, offer evaluation, scenarios, and negotiation drafts. Node.js 20.19+ or 22.12+ is needed for Vite 7.
 
-## Run in VS Code
+## Run locally
 
-Open the `frontend/` folder in VS Code, open its terminal, and run:
+In one terminal, start the backend:
 
 ```sh
-npm install
+cd backend
+cp .env.example .env
+# Edit backend/.env and set TINYFISH_API_KEY for live research.
+npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. Node.js 20.19+ or 22.12+ is required by Vite 7.
-
-## Files
-
-- `frontend/App.jsx`: React components, purchase state, supplier catalogue and decision engine.
-- `frontend/styles/App.css`: all CSS, including the original inline styles moved into reusable layout classes.
-- `frontend/main.jsx`: React entry point.
-- `frontend/index.html`: HTML shell and font link.
-- `frontend/vite.config.js`: Vite configuration.
-- `frontend/package.json` and `frontend/package-lock.json`: frontend dependencies and scripts.
-
-To use this in another Vite React project, copy `frontend/App.jsx` and `frontend/styles/App.css` into its source folder and ensure its entry file imports `App.jsx`. The Google Fonts link in `index.html` is optional; the CSS has system font fallbacks.
-
-## Included behaviour
-
-Prototype sign-in and demo account; purchase details; supplier editing; comparison; evidence labels; scenario sliders; break-even analysis; negotiation drafts; savings ledger; responsive layout and automatic dark theme.
-
-## Original prototype integrations
-
-- Sign-in is a local prototype, not real authentication. Only the displayed user name/email is saved in localStorage; purchase data is kept in memory.
-- The React prototype continues to use its original static demo catalogue. The Round 1 API is a separate backend with its own validated offer contract; use a frontend adapter before connecting it to `DATA_SOURCE.liveUrl`.
-- The original AI helper calls `window.claude.use("sample")`, which is unavailable in a standard Vite app. Manual entry and the worked example remain usable. Replace `askJson` with a call to your backend to add AI extraction; keep provider API keys on the backend.
-- Original placeholder supplier links, illustrative evidence labels and sample currency conversion rates are preserved.
-
-## Build
-
-Run these commands from `frontend/`:
+In a second terminal, start the UI:
 
 ```sh
-npm run build
-npm run preview
+cd frontend
+npm ci
+npm run dev
 ```
 
-## Backend API
+Open the Vite URL shown in the terminal. `vite.config.js` forwards `/api` calls to `http://localhost:3001`. For deployment, serve the built frontend with a same-origin `/api` reverse proxy to the backend. Provider API keys must stay in the backend environment and must not be put in Vite variables.
 
-The independent Round 1 Express/TypeScript backend is in [`../backend/`](../backend/README.md). It provides TinyFish supplier research, provenance-aware SQLite persistence, deterministic evaluation and counterfactual scenarios, and evidence-grounded negotiation drafts. Its setup, environment variables, routes, and tests are documented in the backend README.
+## Workflow
+
+Create a purchase brief, then search. The UI sends the brief to `POST /api/research`, passes the unmodified returned offers and `briefId` to `POST /api/evaluate`, and displays the backend's ranked, partial, and excluded rows. Scenario and negotiation actions call `POST /api/scenario` and `POST /api/negotiate`. Drafts are for review and manual copying; they are not sent automatically.
+
+Live TinyFish research covers packaging and office/industrial products. Engineering materials and searches without TinyFish credentials use clearly marked sample fixtures. Published website terms are not guaranteed supplier quotes: verify availability, pricing, shipping, and delivery before purchasing. The UI keeps purchase briefs in browser localStorage; this prototype has no real sign-in.
+
+See [backend setup and API](../backend/README.md) for the full contract. Run `npm run build` from this directory to verify a production bundle.

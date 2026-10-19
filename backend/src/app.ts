@@ -185,10 +185,14 @@ export function createApp(database: DatabaseClient = createDatabase()) {
       const parsed = EvaluationRequestSchema.safeParse(request.body);
       if (!parsed.success) throw validationError(parsed.error);
       const evaluation = evaluateOffers(parsed.data.offers, parsed.data.brief);
-      const briefId = saveResearch(
-        database.db,
+      const requestedBriefId = requireUuid(
+        typeof request.body.briefId === "string" ? request.body.briefId : undefined,
+      );
+      const briefId = persistedBriefId(
+        database,
         parsed.data.brief,
         parsed.data.offers,
+        requestedBriefId,
       );
       response.json({ briefId, ...evaluation });
     } catch (error) {

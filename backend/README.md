@@ -1,6 +1,6 @@
 # VendorMind backend
 
-Standalone TypeScript/Express API for the existing React frontend. It runs on
+TypeScript/Express API for the React frontend in `../frontend`. It runs on
 port `3001` by default and keeps its code, dependencies, SQLite database,
 fixtures, and research snapshots inside this directory.
 
@@ -19,10 +19,8 @@ flowchart LR
   E --> N[Verified-fact negotiation draft]
 ```
 
-The existing UI remains in the repository root and is not rewritten or
-coupled to backend implementation details. Its current comparison engine is
-still local; use a client adapter before switching it from its legacy offer
-contract to the backend's provenance-aware contract.
+The frontend uses the backend's provenance-aware research, evaluation,
+scenario, and negotiation endpoints. Vite proxies `/api` to port 3001.
 
 ## Run locally
 
@@ -176,6 +174,7 @@ const evaluationResponse = await fetch(`${API_BASE}/api/evaluate`, {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
+    briefId: research.briefId,
     brief: research.brief,
     offers: research.offers
   })
@@ -184,7 +183,8 @@ const evaluation = await evaluationResponse.json();
 ```
 
 `offers` must be the complete array returned by research, not IDs or
-transformed frontend objects.
+transformed frontend objects. Passing the existing `briefId` avoids saving
+the same offer IDs again.
 
 #### `POST /api/scenario`
 

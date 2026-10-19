@@ -3,3 +3,4 @@ dist/
 .env
 vendorai-/
 .env.*
+!backend/.env.example
