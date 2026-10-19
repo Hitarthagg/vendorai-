@@ -4,7 +4,7 @@ Converted from the supplied single HTML file into a Vite React project using Jav
 
 ## Run in VS Code
 
-Open this folder in VS Code, open its terminal, and run:
+Open the `frontend/` folder in VS Code, open its terminal, and run:
 
 ```sh
 npm install
@@ -15,13 +15,14 @@ Open the local URL printed by Vite. Node.js 20.19+ or 22.12+ is required by Vite
 
 ## Files
 
-- `src/App.jsx`: React components, purchase state, supplier catalogue and decision engine.
-- `src/styles/App.css`: all CSS, including the original inline styles moved into reusable layout classes.
-- `src/main.jsx`: React entry point.
-- `index.html`: HTML shell and font link.
-- `vite.config.js`: Vite configuration.
+- `frontend/App.jsx`: React components, purchase state, supplier catalogue and decision engine.
+- `frontend/styles/App.css`: all CSS, including the original inline styles moved into reusable layout classes.
+- `frontend/main.jsx`: React entry point.
+- `frontend/index.html`: HTML shell and font link.
+- `frontend/vite.config.js`: Vite configuration.
+- `frontend/package.json` and `frontend/package-lock.json`: frontend dependencies and scripts.
 
-To use this in an existing Vite React project, copy `src/App.jsx` and `src/styles/App.css` into its `src` folder. Ensure its entry file imports `App.jsx`. The Google Fonts link in `index.html` is optional; the CSS has system font fallbacks.
+To use this in another Vite React project, copy `frontend/App.jsx` and `frontend/styles/App.css` into its source folder and ensure its entry file imports `App.jsx`. The Google Fonts link in `index.html` is optional; the CSS has system font fallbacks.
 
 ## Included behaviour
 
@@ -36,6 +37,8 @@ Prototype sign-in and demo account; purchase details; supplier editing; comparis
 
 ## Build
 
+Run these commands from `frontend/`:
+
 ```sh
 npm run build
 npm run preview
@@ -43,9 +46,4 @@ npm run preview
 
 ## Backend API
 
-The independent Round 1 Express/TypeScript backend is in [`backend/`](./backend/README.md).
-It provides TinyFish supplier research, provenance-aware SQLite persistence,
-deterministic evaluation and counterfactual scenarios, and evidence-grounded
-negotiation drafts. Its setup, environment variables, routes, and tests are
-documented in the backend README. The frontend remains in this repository's
-existing root-level Vite/React app.
+The independent Round 1 Express/TypeScript backend is in [`../backend/`](../backend/README.md). It provides TinyFish supplier research, provenance-aware SQLite persistence, deterministic evaluation and counterfactual scenarios, and evidence-grounded negotiation drafts. Its setup, environment variables, routes, and tests are documented in the backend README.
