@@ -30,4 +30,6 @@ Create a purchase brief, then search. The UI sends the brief to `POST /api/resea
 
 Live TinyFish research covers packaging and office/industrial products. Engineering materials and searches without TinyFish credentials use clearly marked sample fixtures. Published website terms are not guaranteed supplier quotes: verify availability, pricing, shipping, and delivery before purchasing. The UI keeps purchase briefs in browser localStorage; this prototype has no real sign-in.
 
+If a search shows sample data despite adding the key, restart the backend and open `http://localhost:3001/api/health`. Check that `tinyFishConfigured` is `true`, then try a product such as “corrugated shipping boxes”. The result's source and note tell you whether live research ran. A failed TinyFish search now displays its error instead of substituting demo offers. Do not share the API key when reporting the error.
+
 See [backend setup and API](../backend/README.md) for the full contract. Run `npm run build` from this directory to verify a production bundle.

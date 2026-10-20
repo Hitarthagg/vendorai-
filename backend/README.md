@@ -41,6 +41,18 @@ completions provider can be configured using `LLM_BASE_URL`, `LLM_API_KEY`,
 and `LLM_MODEL`; the deterministic, evidence-restricted negotiation drafter
 works without a model.
 
+The backend reads `backend/.env` even if started from another directory. Restart
+the backend after changing it. Check `http://localhost:3001/api/health`: a
+working configuration shows `"tinyFishConfigured": true`. This only confirms
+the key is loaded; a real search verifies whether the key and TinyFish service
+work. Search only runs live for packaging and office/industrial products.
+Engineering materials use sample fixtures, and unsupported categories return
+an error. If TinyFish Search fails or no permitted supplier pages are found,
+the API reports the failure instead of presenting sample data as search results.
+Without `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL`, live pages can still be
+found, but detailed price and shipping extraction remains incomplete. TinyFish
+Agent fallback is disabled by default; enabling it may consume credits.
+
 To build and run the production server:
 
 ```powershell

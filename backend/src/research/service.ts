@@ -35,6 +35,8 @@ type FetchedPage = {
   error?: string;
 };
 
+export class ResearchError extends Error {}
+
 const AgentResultSchema = z.object({
   supplierName: z.string().nullable(),
   productTitle: z.string().nullable(),
@@ -365,13 +367,11 @@ export async function researchSuppliers(
       }),
     );
   } catch (error) {
-    return syntheticResult(
-      brief,
-      category,
-      `TinyFish Search failed after a retry; using labelled fixtures. ${
+    throw new ResearchError(
+      `TinyFish Search failed: ${
         error instanceof Error ? error.message : "Unknown error."
       }`,
-      snapshots,
+      { cause: error },
     );
   }
   const searchRetrievedAt = new Date().toISOString();
@@ -396,11 +396,8 @@ export async function researchSuppliers(
     if (candidates.length === 5) break;
   }
   if (candidates.length === 0) {
-    return syntheticResult(
-      brief,
-      category,
-      "Search returned no eligible public supplier pages after URL and robots.txt checks; labelled fixtures are shown instead.",
-      snapshots,
+    throw new ResearchError(
+      "TinyFish Search returned no eligible public supplier pages after URL and robots.txt checks. Try a more specific packaging or office product.",
     );
   }
 
@@ -547,16 +544,6 @@ export async function researchSuppliers(
       ) {
         continue;
       }
-      agentRuns += 1;
-      console.info("[research] TinyFish Agent run", {
-        sourceUrl: offer.sourceUrl,
-        run: agentRuns,
-        limit: agentLimit,
-      });
-      progress({
-        stage: "agent",
-        message: `Using Agent fallback for supplier ${index + 1} of ${offers.length} (run ${agentRuns} of ${agentLimit}).`,
-      });
       const page = pages.find((candidate) => candidate.candidate.url === offer.sourceUrl);
       if (!page || !offer.sourceUrl) continue;
       let agentResult: Awaited<ReturnType<typeof client.agent.run>> | null = null;

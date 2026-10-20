@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./env.js";
 import express, { type ErrorRequestHandler, type Request, type Response } from "express";
 import { ZodError } from "zod";
 import type { DatabaseClient } from "./db/client.js";
@@ -23,6 +23,7 @@ import { evaluateOffers } from "./engine/evaluate.js";
 import { analyzeScenario } from "./engine/scenario.js";
 import { createNegotiationDraft } from "./llm/negotiate.js";
 import { researchSuppliers } from "./research/service.js";
+import { ResearchError } from "./research/service.js";
 import {
   agentFallbackEnabled,
   tinyFishConfigured,
@@ -148,6 +149,8 @@ export function createApp(database: DatabaseClient = createDatabase()) {
           status:
             error instanceof ApiError
               ? error.statusCode
+              : error instanceof ResearchError
+                ? 502
               : error instanceof Error &&
                   error.message.startsWith("Round 1")
                 ? 422
@@ -160,6 +163,9 @@ export function createApp(database: DatabaseClient = createDatabase()) {
       }
       if (error instanceof Error && error.message.startsWith("Round 1")) {
         throw new ApiError(error.message, 422);
+      }
+      if (error instanceof ResearchError) {
+        throw new ApiError(error.message, 502);
       }
       throw error;
     }
