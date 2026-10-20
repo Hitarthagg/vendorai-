@@ -53,6 +53,12 @@ Without `LLM_BASE_URL`, `LLM_API_KEY`, and `LLM_MODEL`, live pages can still be
 found, but detailed price and shipping extraction remains incomplete. TinyFish
 Agent fallback is disabled by default; enabling it may consume credits.
 
+Live supplier searches target India by default. The buyer's delivery location
+is passed with India to TinyFish Search, and likely Indian results are reviewed
+first. Other public results remain as fallback. A `.in` domain or a search
+snippet is only a ranking hint, not proof of where a supplier operates; check
+the linked page and delivery terms before placing an order.
+
 To build and run the production server:
 
 ```powershell

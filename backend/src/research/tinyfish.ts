@@ -1,4 +1,4 @@
-import { TinyFish } from "@tiny-fish/sdk";
+import { TinyFish, type SearchResult } from "@tiny-fish/sdk";
 import type { Category, PurchaseBrief } from "../schemas.js";
 
 export type ResearchProgress = (event: {
@@ -73,7 +73,29 @@ export function searchQuery(brief: PurchaseBrief, category: Category): string {
       : category === "office_industrial"
         ? "bulk office and industrial supplier"
         : "engineering materials";
-  return `${brief.product} ${vertical} wholesale unit price MOQ shipping`;
+  return `${brief.product} ${vertical} India ${brief.region ?? ""} wholesale unit price MOQ shipping`.replace(/\s+/g, " ").trim();
+}
+
+export function searchLocation(region: string | null): string {
+  if (!region) return "India";
+  return /\bindia\b/i.test(region) ? region : `${region}, India`;
+}
+
+// Prefer likely Indian pages without treating a domain or snippet as proof
+// that a supplier operates in India. Keep other results as fallback.
+export function indianResultsFirst(results: SearchResult[]): SearchResult[] {
+  const score = (result: SearchResult): number => {
+    let host = "";
+    try {
+      host = new URL(result.url).hostname;
+    } catch {
+      // An invalid result will be filtered by safeCandidate later.
+    }
+    const description = `${result.title} ${result.snippet}`;
+    return (host.endsWith(".in") ? 2 : 0) +
+      (/\bindia(?:n)?\b/i.test(description) ? 1 : 0);
+  };
+  return [...results].sort((a, b) => score(b) - score(a));
 }
 
 export function agentGoal(brief: PurchaseBrief): string {

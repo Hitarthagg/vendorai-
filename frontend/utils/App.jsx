@@ -277,7 +277,7 @@ function BriefForm({ brief, setBrief, submit, busy }) {
               onChange={(event) =>
                 change("location", event.target.value)
               }
-              placeholder="e.g. New Delhi"
+              placeholder="e.g. New Delhi (India by default)"
             />
           </label>
 

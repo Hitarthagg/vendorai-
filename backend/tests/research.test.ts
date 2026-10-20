@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { makeMissingOffer } from "../src/research/extract.js";
 import { classifyProduct } from "../src/research/category.js";
-import { isSafeSupplierUrl } from "../src/research/tinyfish.js";
+import {
+  indianResultsFirst,
+  isSafeSupplierUrl,
+  searchLocation,
+  searchQuery,
+} from "../src/research/tinyfish.js";
 import { brief } from "./helpers.js";
 
 describe("research guardrails and categories", () => {
@@ -27,6 +32,24 @@ describe("research guardrails and categories", () => {
     expect(isSafeSupplierUrl("https://localhost/products/boxes")).toBe(false);
     expect(isSafeSupplierUrl("https://supplier.example/account/signin")).toBe(false);
     expect(isSafeSupplierUrl("https://127.0.0.1/products/boxes")).toBe(false);
+  });
+
+  it("searches India by default and prioritizes likely Indian results", () => {
+    expect(searchLocation(null)).toBe("India");
+    expect(searchLocation("New Delhi")).toBe("New Delhi, India");
+    expect(searchLocation("Mumbai, India")).toBe("Mumbai, India");
+    expect(searchQuery(brief, "packaging")).toContain(" India ");
+
+    const results = [
+      { position: 1, site_name: "Global", url: "https://global.example/boxes", title: "Boxes", snippet: "Bulk cartons" },
+      { position: 2, site_name: "Supplier", url: "https://supplier.in/boxes", title: "Boxes", snippet: "Bulk cartons" },
+      { position: 3, site_name: "Maker", url: "https://maker.com/boxes", title: "Indian manufacturer", snippet: "Corrugated boxes" },
+    ];
+    expect(indianResultsFirst(results).map((result) => result.url)).toEqual([
+      "https://supplier.in/boxes",
+      "https://maker.com/boxes",
+      "https://global.example/boxes",
+    ]);
   });
 
   it("retains search results as live offers with unknown fields rather than guessing", () => {

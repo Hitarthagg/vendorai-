@@ -13,7 +13,9 @@ import {
   agentOutputSchema,
   createTinyFishClient,
   isSafeSupplierUrl,
+  indianResultsFirst,
   searchQuery,
+  searchLocation,
   tinyFishConfigured,
   type ResearchProgress,
   type ResearchResult,
@@ -357,13 +359,13 @@ export async function researchSuppliers(
   const snapshots: ResearchSnapshot[] = [];
   let searchResponse;
   const query = searchQuery(brief, category);
-  progress({ stage: "search", message: "Searching for supplier listings." });
+  progress({ stage: "search", message: "Searching for Indian supplier listings first." });
   try {
     searchResponse = await retryOnce(() =>
       client.search.query({
         query,
-        purpose: "Find public wholesale supplier listings for buyer comparison.",
-        location: brief.region ?? undefined,
+        purpose: "Find public India-based wholesale suppliers with published terms for buyer comparison.",
+        location: searchLocation(brief.region),
       }),
     );
   } catch (error) {
@@ -385,7 +387,7 @@ export async function researchSuppliers(
 
   const uniqueHosts = new Set<string>();
   const candidates: Candidate[] = [];
-  for (const result of searchResponse.results.slice(0, 10)) {
+  for (const result of indianResultsFirst(searchResponse.results.slice(0, 10))) {
     const candidate = safeCandidate(result);
     if (!candidate) continue;
     const host = new URL(candidate.url).hostname;

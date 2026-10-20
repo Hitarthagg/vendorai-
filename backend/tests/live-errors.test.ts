@@ -7,6 +7,8 @@ vi.mock("../src/research/tinyfish.js", () => ({
     search: { query: () => Promise.reject(new Error("Invalid API key")) },
   }),
   searchQuery: () => "corrugated shipping boxes",
+  searchLocation: () => "India",
+  indianResultsFirst: (results: unknown[]) => results,
 }));
 
 import { researchSuppliers, ResearchError } from "../src/research/service.js";
