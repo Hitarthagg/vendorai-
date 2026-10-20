@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: vendormind-backend
+    runtime: node
+    rootDir: backend
+    plan: starter
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    disk:
+      name: vendormind-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_PATH
+        value: /var/data/vendormind.sqlite
+      - key: SNAPSHOT_DIR
+        value: /var/data/snapshots
+      - key: LLM_BASE_URL
+        value: https://openrouter.ai/api/v1
+      - key: LLM_MODEL
+        value: minimax/minimax-m3.1-flash:free
+      - key: LLM_API_KEY
+        sync: false

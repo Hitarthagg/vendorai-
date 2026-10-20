@@ -41,6 +41,13 @@ completions provider can be configured using `LLM_BASE_URL`, `LLM_API_KEY`,
 and `LLM_MODEL`; the deterministic, evidence-restricted negotiation drafter
 works without a model.
 
+The example configuration uses OpenRouter's free
+`minimax/minimax-m3.1-flash:free` model, which supports the JSON response format
+used by the backend. Free model availability and usage limits are set by
+OpenRouter and may change. Create an OpenRouter API key and set `LLM_API_KEY` in
+`backend/.env` to that key. Keep the key private; do not commit it or place it
+in frontend configuration.
+
 The backend reads `backend/.env` even if started from another directory. Restart
 the backend after changing it. Check `http://localhost:3001/api/health`: a
 working configuration shows `"tinyFishConfigured": true`. This only confirms
@@ -65,6 +72,22 @@ To build and run the production server:
 npm run build
 npm start
 ```
+
+## Deploy to Render
+
+The repository includes a root-level `render.yaml` Blueprint for the backend.
+In Render, create a new Blueprint Instance for this repository and deploy the
+`vendormind-backend` web service. The service builds with `npm ci` and
+`npm run build`, starts with `npm start`, and uses `/api/health` for health
+checks. Render supplies the port through `PORT`.
+
+The Blueprint mounts a persistent disk at `/var/data` and stores the SQLite
+database and research snapshots there. Persistent disks require a paid Render
+instance and are not available on the free plan. Set optional provider
+credentials such as `TINYFISH_API_KEY` in the service's Render environment
+settings. The Blueprint configures OpenRouter and a free model by default; add
+your OpenRouter key as `LLM_API_KEY` in Render's environment settings. Never
+commit `.env` or provider credentials to the repository.
 
 ## API integration guide (Member A + Member C)
 
