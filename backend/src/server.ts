@@ -9,7 +9,7 @@ if (!Number.isInteger(port) || port < 1 || port > 65535) {
 
 const database = createDatabase();
 const app = createApp(database);
-const server = app.listen(port, () => {
+const server = app.listen(port, "0.0.0.0", () => {
   console.log(`VendorMind API listening on http://localhost:${port}`);
 });
 

@@ -81,12 +81,15 @@ In Render, create a new Blueprint Instance for this repository and deploy the
 `npm run build`, starts with `npm start`, and uses `/api/health` for health
 checks. Render supplies the port through `PORT`.
 
-The Blueprint mounts a persistent disk at `/var/data` and stores the SQLite
-database and research snapshots there. Persistent disks require a paid Render
-instance and are not available on the free plan. Set optional provider
-credentials such as `TINYFISH_API_KEY` in the service's Render environment
-settings. The Blueprint configures OpenRouter and a free model by default; add
-your OpenRouter key as `LLM_API_KEY` in Render's environment settings. Never
+The Blueprint uses Render's free instance plan and stores the SQLite database
+and research snapshots in the service filesystem. Free instances have
+ephemeral storage, so this data can be lost when the service restarts or
+redeploys. To preserve it, switch to a paid plan and configure a persistent
+disk. The Blueprint configures OpenRouter with `minimax/minimax-m3.1-flash`;
+enter your OpenRouter key as `LLM_API_KEY` in Render's secret environment
+settings. The backend uses the OpenAI-compatible base URL to call OpenRouter;
+`LLM_PROVIDER` is included as deployment metadata. Set optional credentials
+such as `TINYFISH_API_KEY` in the service's Render environment settings. Never
 commit `.env` or provider credentials to the repository.
 
 ## API integration guide (Member A + Member C)
